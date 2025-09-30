@@ -15,7 +15,8 @@
   "author": "Kashish Oza",
   "license": "ISC",
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "prettier": "^3.6.2"
   },
   "dependencies": {
     "dotenv": "^17.2.3"
