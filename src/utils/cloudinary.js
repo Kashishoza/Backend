@@ -1,5 +1,9 @@
 import fs from "fs"
 import { v2 as cloudinary } from "cloudinary";
+import dotenv from "dotenv"
+dotenv.config({
+    path: "./.env"
+})
 
 // Configuration
     cloudinary.config({ 
@@ -17,10 +21,12 @@ import { v2 as cloudinary } from "cloudinary";
                 resource_type: "auto"
             })
             // file has been uploaded successfully
-            console.log("file is uploaded on cloudinary", response.url);
+            //console.log("file is uploaded on cloudinary", response.url);
+            fs.unlinkSync(localFilePath)
             return response
            }
-        catch (error) {
+           catch (error) {
+            console.error("Cloudinary upload error:", error);
             fs.unlinkSync(localFilePath) // remove the locally saved temporry file as the upload operation got failed
             return null
         }

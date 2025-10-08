@@ -3,6 +3,7 @@ import { ApiError } from "../utils/ApiError.js"
 import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";    
 import { ApiResponse } from "../utils/ApiResponse.js";
+import mongoose from "mongoose";
 
 const registerUser = asyncHandler( async (req, res) =>{
     // get user details from frontend
@@ -14,6 +15,10 @@ const registerUser = asyncHandler( async (req, res) =>{
     // remove password and refresh token field from response
     // check for user creation 
     // return response
+
+    console.log("BODY:", req.body);
+    console.log("FILES:", req.files);
+
 
     const {fullName, email, username, password} = req.body
     console.log("email: ", email);
@@ -29,7 +34,7 @@ const registerUser = asyncHandler( async (req, res) =>{
         throw new ApiError(400, "All fields are required")
     }
 
-    const existedUser = User.findOne({
+    const existedUser = await User.findOne({
         $or: [ { username }, { email } ] 
     })
 
@@ -50,6 +55,7 @@ const registerUser = asyncHandler( async (req, res) =>{
 
     const avatar = await uploadOnCloudinary(avatarLocalPath)
     const coverImage = await uploadOnCloudinary(coverImageLocalPath)
+    console.log("image uploaded")
 
     if(!avatar){
         throw new ApiError(400, "Avatar file is required")
@@ -61,7 +67,7 @@ const registerUser = asyncHandler( async (req, res) =>{
                             coverImage: coverImage?.url  || " ",
                             email,
                             password,
-                            username: username.toLowerCase() 
+                            username: username ? username.toLowerCase() : ""
                         })
 
     const createdUser = await User.findById(user._id).select(
