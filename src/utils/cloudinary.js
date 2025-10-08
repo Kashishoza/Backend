@@ -21,7 +21,7 @@ import { v2 as cloudinary } from "cloudinary";
             return response
            }
         catch (error) {
-            fs.unlinkSync(localFilePath)
+            fs.unlinkSync(localFilePath) // remove the locally saved temporry file as the upload operation got failed
             return null
         }
     }
