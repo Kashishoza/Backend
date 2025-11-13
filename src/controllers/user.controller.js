@@ -164,7 +164,7 @@ const logoutUser = asyncHandler(async (req, res)=>{
         req.user._id,
         {
             $unset: {
-                refreshToken: undefined
+                refreshToken: 1
             },
         },
         {
@@ -192,11 +192,11 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     }
 
     try {
-        const decodeToken = jwt.verify(
+        const decodedToken = jwt.verify(
             incomingRefreshToken, 
             process.env.REFRESH_TOKEN_SECRET
         )
-        const user = await User.findById(decodeToken?._id)
+        const user = await User.findById(decodedToken?._id)
     
         if(!user){
             throw new ApiError(401, "Invalid refresh token");   
@@ -380,13 +380,13 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
         {
             $addFields:{
                 subscribersCount:{
-                    $size: $subscribers
+                    $size: "$subscribers"
                 },
                 channelsSubscribedToCount: {
-                    $size: $subscribedTo
+                    $size: "$subscribedTo"
                 },
                 isSubscribed:{
-                    $condition: {
+                    $cond: {
                         if: {$in: [req.user?._id, "$subscribers.subscriber"]},
                         then: true,
                         else: false
